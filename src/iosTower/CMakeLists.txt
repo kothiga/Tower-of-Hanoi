@@ -9,10 +9,15 @@ set(TARGET_NAME iosTower)
 
 set(${TARGET_NAME}_SRC
     src/main.cpp
+    src/iosPlayer.cpp
+    ../game/src/game.cpp
+    ../game/src/player.cpp
 )
 
 set(${TARGET_NAME}_HDR
-    #include/iosPlayer.hpp
+    include/iosPlayer.hpp
+    ../game/include/game.hpp
+    ../game/include/player.hpp
 )
 
 add_executable(
@@ -23,7 +28,9 @@ add_executable(
 
 target_include_directories(
     ${TARGET_NAME}
-    PRIVATE ./include
+    PRIVATE 
+    ./include
+    ../game/include
 )
 
 target_link_libraries(
