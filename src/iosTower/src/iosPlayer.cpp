@@ -20,7 +20,7 @@ IosPlayer::IosPlayer() : Player() {
 
 
 IosPlayer::~IosPlayer() {
-
+    std::cout << "[debug] IosPlayer Destroyed." << std::endl;
 }
 
 
@@ -36,8 +36,9 @@ void IosPlayer::writeOutput(const std::string output) {
 std::string IosPlayer::readInput() {
 
     //-- Get some input from the input stream.
-    std::cout << "\n>> ";
+    std::cout << ">> ";
     std::string ret;
+
     getline(std::cin, ret);
 
     return ret;

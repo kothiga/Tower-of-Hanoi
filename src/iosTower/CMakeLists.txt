@@ -12,12 +12,14 @@ set(${TARGET_NAME}_SRC
     src/iosPlayer.cpp
     ../game/src/game.cpp
     ../game/src/player.cpp
+    ../game/src/board.cpp
 )
 
 set(${TARGET_NAME}_HDR
     include/iosPlayer.hpp
     ../game/include/game.hpp
     ../game/include/player.hpp
+    ../game/include/board.hpp
 )
 
 add_executable(

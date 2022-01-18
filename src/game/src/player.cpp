@@ -87,12 +87,20 @@ action Player::getAction() {
             //--   It is up to the game to ensure the move passed
             //--   passed to the board uses values in the correct 
             //--   range, as the player isn't aware of the board conf.
-            //--
-            //-- TODO: what happens if the u and v string are outside of the 
-            //--       range of an int?
             ret.selection = action::MOVE;
-            ret.from = std::stoi(u);
-            ret.to   = std::stoi(v);
+            try {
+
+                ret.from = std::stoi(u);
+                ret.to   = std::stoi(v);
+
+            } catch(std::out_of_range) {
+
+                ret.selection = action::HELP;
+                ret.msg = "[Error] Received an integer value out of range. Got ``" 
+                + u + "`` and ``" + v + "``. Please ensure u and v are propper integers.\n\n" 
+                + this->getHelpString();
+
+            }
 
             return ret;
         }

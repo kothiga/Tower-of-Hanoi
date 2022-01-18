@@ -14,14 +14,16 @@
 
 
 Game::Game(std::shared_ptr<Player> player) {
-    //TODO: check copy ref syntax.
+    //-- Take a reference to the shared_ptr resource.
     this->_player = player;
+    this->_board  = std::make_shared<Board>();
 }
 
 
 Game::~Game() {
-    //TODO: release shared_ptr.
-    _player->writeOutput("TODO: Release my resources.");
+    //-- Release the shared_ptr resource.
+    this->_player.reset();
+    this->_board.reset();
 }
 
 
@@ -80,4 +82,3 @@ int Game::run() {
 
     return 0;
 }
-
