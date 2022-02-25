@@ -23,8 +23,9 @@ Board::Board(std::size_t pegs/*=3*/, std::size_t disks/*=3*/, bool isBicolor/*=f
 
 Board::~Board() {
     this->_state.clear();
-    //TODO: REMOVE.
-    //std::cout << "[debug] Board Destroyed." << std::endl;
+    // <REMOVE>
+    std::cout << "[debug] Board Destroyed." << std::endl;
+    // <\REMOVE>
 }
 
 
@@ -37,8 +38,8 @@ bool Board::init() {
     _state.clear();
 
     //-- Check bounds for number of pegs and disks.
-    if (_num_disk < 3 || _num_disk > 8) { return false; }
-    if (_num_peg  < 3 || _num_peg  > 8) { return false; }
+    if (_num_disk < 3 || _num_disk > 6) { return false; }
+    if (_num_peg  < 3 || _num_peg  > 6) { return false; }
 
     //-- Allocate the proper number of pegs for the board.
     for (std::size_t idx = 0; idx < _num_peg; ++idx) {
@@ -128,7 +129,9 @@ std::string Board::getShowableState() { //TODO: IMPLEMENT.
     for (std::size_t idx = 0; idx < _state.size(); ++idx) {
         ret += ("[" + std::to_string(idx) + "] ");
         for (auto d : _state[idx]) {
-            ret += ("(" + std::to_string(d.getColor()) + "," + std::to_string(d.getSize()) + ") "); 
+            ret += "(";
+            ret += (d.getColor() ? "W1":"B0");
+            ret += ":" + std::to_string(d.getSize()) + ") ";
         } 
         ret += "\n";
     }
@@ -140,64 +143,122 @@ std::string Board::getShowableState() { //TODO: IMPLEMENT.
 }
 
 
-unsigned long long Board::getHashableState() { //TODO: IMPLEMENT.
+unsigned long long Board::getHashableState() {
     
-    unsigned long long ret = 0;
-    std::vector<std::size_t> hash;
-
-    for (std::size_t pdx = 0; pdx < _num_peg; ++pdx) {
-
-        std::size_t height = 0;
-        for (std::size_t ddx = 0; ddx < _num_disk; ++ddx) {
+    //-- Set up a vector that the hash can be computed from.
+    std::vector<std::size_t> hash(_num_peg * _num_disk);
+    
+    //-- Step through the board state and build a vector to hash.
+    for (std::size_t pdx = 0; pdx < _state.size(); ++pdx) {
+        for (std::size_t ddx = 0; ddx < _state[pdx].size(); ++ddx) {
             
-            //-- Check if height is out of range.
-            if (height >= _state[pdx].size()) { continue; }
-            
-            //-- What is the current disk we're looking at?
-            int disk_size = _num_disk - ddx;
+            //-- Get a copy of this disk.
+            Disk d = _state[pdx][ddx];
 
-            //-- Check to see if it's a match.
-            std::size_t current_val = 0;
-            if (_state[pdx][height] == disk_size) {
+            //-- Compute the index of the hash vector from the current disk.
+            std::size_t hdx = (_num_disk - d.getSize()) + (pdx * _num_disk);
 
-                if (_bicolor) {
-                    // 5 States 
+            if (_bicolor) {
+                // 5 States 
 
-                    //-- 0 : Disk not present at position
-                    //-- 1 : Black disk present
-                    //-- 2 : White disk present
-                    //-- 3 : Black disk with white disk ontop
-                    //-- 4 : White disk with black disk ontop
+                //-- 0 : Disk not present at position
+                //-- 1 : Black disk present
+                //-- 2 : White disk present
+                //-- 3 : Black disk with white disk ontop
+                //-- 4 : White disk with black disk ontop
 
-                    // Need to look above the current disk (height+1) to determine state.
+                //-- Find which state we have.
+                std::size_t state = d.getColor() + 1; // Black:0, White:1
 
 
-                    // (case 1/2) height += 1
-                    // (case 3/4) height += 2
+                //-- Need to look above the current disk (height+1) to determine state.
+                if (ddx+1 < _state[pdx].size()) {
 
-                } else {
-                    // 2 States
+                    //-- Get the disk above and check if the sizes are the same.
+                    Disk top = _state[pdx][ddx+1];
+                    if (d.getSize() == top.getSize()) {
 
-                    //-- 0 : Disk not present at position
-                    //-- 1 : Disk is present
+                        //-- Case 3/4: adjust state val.
+                        state += 2;
 
-                    //current_val = pow(2, ddx + (pdx * _num_disk));
-
-                    //-- Increase the height.
-                    height++;
+                        //-- Advance disk index so we don't look at this twice.
+                        ddx += 1;
+                    }
                 }
-            }
 
-            ret += current_val;
+                //-- Set the found state.
+                hash[hdx] = state;
+
+            } else {
+                // 2 States
+
+                //-- 0 : Disk not present at position
+                //-- 1 : Disk is present
+                hash[hdx] = 1;
+
+            }
         }
     }
 
-    for (auto h : hash) std::cout << h << " ";
-    std::cout << std::endl;
+
+   // <REMOVE>
+    for (int idx = 0; idx < hash.size(); ++idx) {
+        if ((idx % _num_disk) == 0) std::cout << "| ";
+        std::cout << hash[idx] << " ";
+    }
+    std::cout << "|" << std::endl;
+    // <\REMOVE>
+
+    return computeHash(hash);
+}
+
+
+unsigned long long Board::computeHash(std::vector<std::size_t> hash) {
+
+    //-- Compute the hash of the board state.
+    unsigned long long ret = 0;
+
+    long long int power = 1;
+    for (std::size_t hdx = 0; hdx < hash.size(); ++hdx) {
+
+        // <REMOVE>
+        if (hdx) std::cout << " + ";
+        std::cout << hash[hdx] << "*" << power;
+        // <\REMOVE>
+
+        ret += (hash[hdx] * power);
+        power *= ( _bicolor ? 5 : 2 );
+    }
+    // <REMOVE>
+    std:: cout << " = " << ret << std::endl;
+    // <\REMOVE>
 
     return ret;
 }
 
+
+std::vector<std::size_t> Board::computeVector(unsigned long long hash) {
+
+    //-- Set up a vector to hold the converted hash.
+    std::vector<std::size_t> ret(_num_peg * _num_disk);
+
+    for (std::size_t hdx = 0; hdx < ret.size(); ++hdx) {
+
+        // <REMOVE>
+        //std::cout << hash << "\t= ";
+        // <\REMOVE>
+
+        ret[hdx] = hash % ( _bicolor ? 5 : 2 );
+        hash /= ( _bicolor ? 5 : 2 );
+
+        // <REMOVE>
+        //std::cout << ret[hdx] << "*" << ( _bicolor ? 5 : 2 ) << " + " << hash << std::endl;
+        // <\REMOVE>
+    }
+
+
+    return ret;
+}
 
 
 bool Board::move(int from, int to) {

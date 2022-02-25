@@ -32,8 +32,8 @@ bool Game::configure(std::map<std::string,std::string> conf) {
     //TODO: take strings from conf and set appropriately.
 
     _board->setNumPegs(3);
-    _board->setNumDisks(3);
-    _board->setBicolor(false);
+    _board->setNumDisks(4);
+    _board->setBicolor(true);
 
     _board->init();
 
@@ -54,7 +54,7 @@ int Game::run() {
 
         //-- Set vars outside switch.
         bool success;
-        std::string status;
+        std::string showable;
 
         switch (act.selection) {
         
@@ -73,8 +73,9 @@ int Game::run() {
             if (!success) {
                 _player->writeOutput("[debug] Move action failed!!");
             } else {
-                status = _board->getShowableState();
-                _player->writeOutput(status);
+                showable = _board->getShowableState();
+                _board->getHashableState();
+                _player->writeOutput(showable);
             }
 
             break;
@@ -82,8 +83,8 @@ int Game::run() {
         case action::STATUS:
             //-- Generate the boards status.
             _player->writeOutput("[debug] Generating current board status...");
-            status = _board->getShowableState();
-            _player->writeOutput(status);
+            showable = _board->getShowableState();
+            _player->writeOutput(showable);
             break;
 
         case action::HINT:

@@ -92,6 +92,7 @@ TEST(BoardTest, BoardMove_Mono) {
     EXPECT_FALSE(b.getIsBicolor());
     EXPECT_TRUE(b.init());
 
+    //std::cout << "Board hash: " << b.getHashableState() << std::endl;
     //printState(b.getRawState());
 
     // Make some legal moves.
@@ -99,6 +100,7 @@ TEST(BoardTest, BoardMove_Mono) {
     EXPECT_TRUE(b.move(0, 2));
     EXPECT_TRUE(b.move(0, 3));
 
+    //std::cout << "Board hash: " << b.getHashableState() << std::endl;
     //printState(b.getRawState());
 
     // Make a few bad moves.
@@ -116,6 +118,7 @@ TEST(BoardTest, BoardMove_Mono) {
     // Try an empty peg move.
     EXPECT_FALSE(b.move(0, 3));
 
+    //std::cout << "Board hash: " << b.getHashableState() << std::endl;
     //printState(b.getRawState());
 
 }
@@ -127,6 +130,7 @@ TEST(BoardTest, BoardMove_Bicolor) {
     EXPECT_TRUE(b.getIsBicolor());
     EXPECT_TRUE(b.init());
 
+    std::cout << "Board hash: " << b.getHashableState() << std::endl;
     printState(b.getRawState());
 
     // Make some legal moves.
@@ -140,6 +144,7 @@ TEST(BoardTest, BoardMove_Bicolor) {
     EXPECT_FALSE(b.move(2, 0));
     EXPECT_FALSE(b.move(0, 1));
 
+    std::cout << "Board hash: " << b.getHashableState() << std::endl;
     printState(b.getRawState());
 
     // Make some legal moves.
@@ -148,6 +153,7 @@ TEST(BoardTest, BoardMove_Bicolor) {
     EXPECT_TRUE(b.move(1, 2));
     EXPECT_TRUE(b.move(1, 0));
 
+    std::cout << "Board hash: " << b.getHashableState() << std::endl;
     printState(b.getRawState());
 
 }
@@ -158,11 +164,19 @@ TEST(BoardTest, BoardMove_Bicolor) {
 //
 TEST(BoardTest, BoardGetHashableState_Mono) {
 
-
+    Board b(/*pegs=*/4, /*disks=*/3, /*isBicolor=*/false);
+    EXPECT_TRUE(b.init());
+    
+    unsigned long long h = b.getHashableState();
+    printState(b.getRawState());
 
 }
 TEST(BoardTest, BoardGetHashableState_Bicolor) {
 
+    Board b(/*pegs=*/3, /*disks=*/4, /*isBicolor=*/true);
+    EXPECT_TRUE(b.init());
 
+    unsigned long long h = b.getHashableState();
+    printState(b.getRawState());
 
 }

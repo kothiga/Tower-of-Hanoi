@@ -31,7 +31,7 @@ class Disk {
     bool operator==(const Disk& lhs) { return this->size == lhs.size; }
     bool operator==(const int lhs)   { return this->size == lhs;      }
     friend std::ostream& operator<<(std::ostream& os, const Disk& dsk) { 
-        os << "(" << dsk.color << "," << dsk.size << ")"; 
+        os << "(" << (dsk.color ? "W1" : "B0") << ":" << dsk.size << ")"; 
         return os; 
     }
 };
@@ -155,6 +155,26 @@ class Board {
     ** @return a hash that can be passed to a solving interface.
     ** =========================================================================== */
     unsigned long long getHashableState();
+
+
+    /* ===========================================================================
+    **  Compute the hash of an input vector representing the state of the game board.
+    **
+    ** @param hash  a vector holding the positional presence of disks.
+    **
+    ** @return a unique hash for the vector.
+    ** =========================================================================== */
+    unsigned long long computeHash(std::vector<std::size_t> hash);
+
+
+    /* ===========================================================================
+    **  Compute the corresponding vector repersenting the game board from an input hash.
+    **
+    ** @param hash  a unique hash for a board state.
+    **
+    ** @return a vector representing the state of the game board.
+    ** =========================================================================== */
+    std::vector<std::size_t> computeVector(unsigned long long hash);
 
 
     /* ===========================================================================
