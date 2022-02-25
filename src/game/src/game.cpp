@@ -24,11 +24,19 @@ Game::~Game() {
     //-- Release the shared_ptr resource.
     this->_player.reset();
     this->_board.reset();
+    std::cout << "[debug] Game Destroyed." << std::endl;
 }
 
 
 bool Game::configure(std::map<std::string,std::string> conf) {
     //TODO: take strings from conf and set appropriately.
+
+    _board->setNumPegs(3);
+    _board->setNumDisks(3);
+    _board->setBicolor(false);
+
+    _board->init();
+
     return true;
 }
 
@@ -44,6 +52,10 @@ int Game::run() {
         //-- Get an action from the user.
         action act = _player->getAction();
 
+        //-- Set vars outside switch.
+        bool success;
+        std::string status;
+
         switch (act.selection) {
         
         case action::HELP:
@@ -56,11 +68,22 @@ int Game::run() {
             _player->writeOutput("[debug] Moving peice from " 
                 + std::to_string(act.from) + " to " 
                 + std::to_string(act.to) + "!!");
+
+            success = _board->move(act.from, act.to);
+            if (!success) {
+                _player->writeOutput("[debug] Move action failed!!");
+            } else {
+                status = _board->getShowableState();
+                _player->writeOutput(status);
+            }
+
             break;
 
         case action::STATUS:
             //-- Generate the boards status.
             _player->writeOutput("[debug] Generating current board status...");
+            status = _board->getShowableState();
+            _player->writeOutput(status);
             break;
 
         case action::HINT:

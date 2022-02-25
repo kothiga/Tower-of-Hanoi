@@ -13,13 +13,27 @@
 #ifndef TOWER_OF_HANOI_BOARD_HPP
 #define TOWER_OF_HANOI_BOARD_HPP
 
+#include <iostream>
+#include <cmath>
 #include <memory>
 #include <vector>
 
 
-struct Disk {
-    int size;
-    int color;
+class Disk {
+    private:
+    int size, color;
+
+    public:
+    Disk(int s, int c=0) : size(s), color(c) {}
+    int  getSize()  { return size;  }
+    int  getColor() { return color; }
+    bool operator>(const Disk& lhs)  { return this->size >  lhs.size; }
+    bool operator==(const Disk& lhs) { return this->size == lhs.size; }
+    bool operator==(const int lhs)   { return this->size == lhs;      }
+    friend std::ostream& operator<<(std::ostream& os, const Disk& dsk) { 
+        os << "(" << dsk.color << "," << dsk.size << ")"; 
+        return os; 
+    }
 };
 
 
@@ -36,7 +50,7 @@ class Board {
     bool _board_set;
     std::vector<std::vector<Disk>> _state; // Board state.
 
-    
+
     public:
     /* ============================================================================
     **  Main Constructor.
@@ -86,11 +100,61 @@ class Board {
 
 
     /* ===========================================================================
+    **  Set the game board state from a unique descriptor.
+    **
+    ** @param hash  The unique descriptor for the desired board state.
+    **
+    ** @return success of if the given hash was accepted. If false, board state is unchanged.
+    ** =========================================================================== */
+    bool setFromHashableState(unsigned long long hash);
+
+
+    /* ===========================================================================
+    **  Get the number of pegs for the board.
+    **
+    ** @return a long int that tells the number of pegs.
+    ** =========================================================================== */
+    std::size_t getNumPegs();
+
+
+    /* ===========================================================================
+    **  Get the number of disks (per color) for the board.
+    **
+    ** @return a long int that tells the number of disks (per color).
+    ** =========================================================================== */
+    std::size_t getNumDisks();
+
+
+    /* ===========================================================================
+    **  Get if the board is set for mono or bicolor version.
+    **
+    ** @return a boolean that tells if the game is bicolor.
+    ** =========================================================================== */
+    bool getIsBicolor();
+
+
+    /* ===========================================================================
+    **  Get the raw state of the game board.
+    **
+    ** @return a 2D vector that holds a copy of raw board state.
+    ** =========================================================================== */
+    std::vector<std::vector<Disk>> getRawState();
+
+
+    /* ===========================================================================
     **  Get a showable state of the game board.
     **
     ** @return a string that can be passed to the user interface.
     ** =========================================================================== */
     std::string getShowableState();
+
+
+    /* ===========================================================================
+    **  Get a unique descriptor of the state of the game board.
+    **
+    ** @return a hash that can be passed to a solving interface.
+    ** =========================================================================== */
+    unsigned long long getHashableState();
 
 
     /* ===========================================================================

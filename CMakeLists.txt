@@ -38,7 +38,7 @@ endif(YCM_FOUND)
 find_package(ICUBcontrib QUIET)
 if (ICUBcontrib_FOUND)
 
-    message("ICUBcontrib found")
+    #message("ICUBcontrib found")
     list(APPEND CMAKE_MODULE_PATH ${ICUBCONTRIB_MODULE_PATH})
     #include(ICUBcontribOptions)
     include(ICUBcontribHelpers)

@@ -47,7 +47,7 @@ action Player::getAction() {
             return ret;
         }
 
-        if (cmd == "status") {
+        if (cmd == "status" || cmd == "show") {
             ret.selection = action::STATUS;
             return ret;
         }
@@ -125,7 +125,7 @@ std::string Player::getHelpString() {
     "Possible actions:                                               \n"
     "    help                ``display this helpful message``        \n"
     "    move int(u) int(v)  ``move the disk from peg u to peg v``   \n"
-    "    status              ``get current board configuration``     \n"
+    "    status/show         ``get current board configuration``     \n"
     "    hint                ``request a hint for what next action`` \n"
     "    quit/exit           ``stop the game and exit``              \n"
     "";
