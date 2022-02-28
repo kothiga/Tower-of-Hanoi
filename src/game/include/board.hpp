@@ -160,21 +160,23 @@ class Board {
     /* ===========================================================================
     **  Compute the hash of an input vector representing the state of the game board.
     **
-    ** @param hash  a vector holding the positional presence of disks.
+    ** @param encoding  a vector holding the positional presence of disks.
     **
     ** @return a unique hash for the vector.
     ** =========================================================================== */
-    unsigned long long computeHash(std::vector<std::size_t> hash);
+    unsigned long long computeHash(std::vector<std::size_t> encoding);
 
 
     /* ===========================================================================
     **  Compute the corresponding vector repersenting the game board from an input hash.
+    **  If no hash is provided, will generate the encoding from the board's raw state.
     **
-    ** @param hash  a unique hash for a board state.
+    ** @param [optional] hash  a unique hash for a board state.
     **
-    ** @return a vector representing the state of the game board.
+    ** @return an encoding representing the state of the game board.
     ** =========================================================================== */
-    std::vector<std::size_t> computeVector(unsigned long long hash);
+    std::vector<std::size_t> generateEncoding();
+    std::vector<std::size_t> generateEncoding(unsigned long long hash);
 
 
     /* ===========================================================================
@@ -190,9 +192,9 @@ class Board {
 
     private:
     /* ===========================================================================
-    **  Temp.
+    **  Allocate fresh storage space for the board.
     ** =========================================================================== */
-    void temp();
+    void allocateNewBoard();
     
 };
 

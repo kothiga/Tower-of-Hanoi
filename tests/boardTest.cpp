@@ -180,3 +180,63 @@ TEST(BoardTest, BoardGetHashableState_Bicolor) {
     printState(b.getRawState());
 
 }
+
+
+//
+// BoardTest_BoardSetFromHashableState
+//
+TEST(BoardTest, BoardSetFromHashableState_Mono) {
+
+
+
+}
+TEST(BoardTest, BoardSetFromHashableState_Bicolor) {
+
+    Board b(/*pegs=*/3, /*disks=*/4, /*isBicolor=*/true);
+    EXPECT_TRUE(b.init());
+
+    std::vector<std::size_t> state;
+    unsigned long long hash;
+
+    // Board State
+    //                  [XX]      [O]
+    //        [OO]      [OOO]     [X]
+    //        [OOOO]    [XXXX]    [XXX]
+    state = { 2,0,2,0,  1,2,1,0,  0,1,0,3 };
+    hash  = b.computeHash(state);
+
+    EXPECT_TRUE(b.setFromHashableState(hash));
+    EXPECT_EQ(hash, b.getHashableState());
+
+    printState(b.getRawState());
+
+
+    // Board State
+    //                  [XX]      
+    //                  [OO]      
+    //        [XXX]     [OOO]     [X]
+    //        [OOOO]    [XXXX]    [O]
+    state = { 2,1,0,0,  1,2,4,0,  0,0,0,4 };
+    hash  = b.computeHash(state);
+
+    EXPECT_TRUE(b.setFromHashableState(hash));
+    EXPECT_EQ(hash, b.getHashableState());
+
+    printState(b.getRawState());
+
+
+
+    // Board State
+    //                  [XX]      
+    //        [X]       [OO]      
+    //        [XXX]     [OOO]     [O]
+    //        [OOOO]    [XXXX]    [XXXX]
+    state = { 2,1,0,1,  1,2,4,0,  1,0,0,2 };
+    hash  = b.computeHash(state);
+
+    EXPECT_FALSE(b.setFromHashableState(hash));
+    //EXPECT_EQ(hash, b.getHashableState());
+
+    printState(b.getRawState());
+
+}
