@@ -21,7 +21,7 @@
 
 struct action {
     int from, to; std::string msg;
-    enum { HELP, MOVE, STATUS, HINT, QUIT } selection;
+    enum { HELP, MOVE, STATUS, GOAL, HINT, QUIT } selection;
 };
 
 

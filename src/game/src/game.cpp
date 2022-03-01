@@ -87,6 +87,13 @@ int Game::run() {
             _player->writeOutput(showable);
             break;
 
+        case action::GOAL:
+            //-- Generate the boards goal.
+            _player->writeOutput("[debug] Generating board goal state...");
+            showable = _board->getShowableGoal();
+            _player->writeOutput(showable);
+            break;
+
         case action::HINT:
             //-- Ask the solver for the next optimal move. 
             _player->writeOutput("[debug] Generating a hint! Hold tight...");

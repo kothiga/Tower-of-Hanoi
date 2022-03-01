@@ -52,6 +52,11 @@ action Player::getAction() {
             return ret;
         }
 
+        if (cmd == "goal") {
+            ret.selection = action::GOAL;
+            return ret;
+        }
+
         if (cmd == "help") {
             ret.selection = action::HELP;
             ret.msg = this->getHelpString();
@@ -126,6 +131,7 @@ std::string Player::getHelpString() {
     "    help                ``display this helpful message``        \n"
     "    move int(u) int(v)  ``move the disk from peg u to peg v``   \n"
     "    status/show         ``get current board configuration``     \n"
+    "    goal                ``show what the goal state``            \n"
     "    hint                ``request a hint for what next action`` \n"
     "    quit/exit           ``stop the game and exit``              \n"
     "";

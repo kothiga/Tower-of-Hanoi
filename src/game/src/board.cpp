@@ -38,15 +38,27 @@ bool Board::init() {
     if (_num_disk < 3 || _num_disk > 6) { return false; }
     if (_num_peg  < 3 || _num_peg  > 6) { return false; }
 
+    //-- Allocate the goal only once.
+    _goal.clear();
+    for (std::size_t idx = 0; idx < _num_peg; ++idx) {
+        _goal.push_back(std::vector<Disk>());
+        _goal[idx].reserve(_num_disk*2 + 1);
+    }
+
     //-- Init the board state to the default state.
     if (_bicolor) {
         for (std::size_t size = 0; size < _num_disk; ++size) {
             _state[0].push_back(Disk(_num_disk - size, (size+1) % 2));
             _state[1].push_back(Disk(_num_disk - size, (size+2) % 2));
+
+            _goal[0].push_back(Disk(_num_disk - size, 0)); // Black.
+            _goal[1].push_back(Disk(_num_disk - size, 1)); // White.
         }
     } else {
         for (std::size_t size = 0; size < _num_disk; ++size) {
             _state[0].push_back(Disk(_num_disk - size));
+
+            _goal[_num_peg-1].push_back(Disk(_num_disk - size));
         }
     }
 
@@ -154,33 +166,18 @@ std::vector<std::vector<Disk>> Board::getRawState() {
 }
 
 
-std::string Board::getShowableState() { //TODO: IMPLEMENT.
-
-    //-- Find the max height of a single peg.
-    std::size_t max_height = 0;
-    for (std::size_t idx = 0; idx < _state.size(); ++idx) {
-        max_height = (_state[idx].size() > max_height) ? _state[idx].size() : max_height;
-    }
-
-    std::string ret = "";
-
-    //TODO: 
-    // <REMOVE>
-    ret += ">>>\n";
-    for (std::size_t idx = 0; idx < _state.size(); ++idx) {
-        ret += ("[" + std::to_string(idx) + "] ");
-        for (auto d : _state[idx]) {
-            ret += "(";
-            ret += (d.getColor() ? "W1":"B0");
-            ret += ":" + std::to_string(d.getSize()) + ") ";
-        } 
-        ret += "\n";
-    }
-    ret += ">>>\n";
-    // <\REMOVE>
+std::vector<std::vector<Disk>> Board::getRawGoal() {
+    return _goal;
+}
 
 
-    return ret;
+std::string Board::getShowableState() {
+    return drawBoard(_state);    
+}
+
+
+std::string Board::getShowableGoal() {
+    return drawBoard(_goal);    
 }
 
 
@@ -349,3 +346,110 @@ void Board::allocateNewBoard() {
 
     return;
 }
+
+
+std::string Board::drawBoard(const std::vector<std::vector<Disk>> board) {
+
+    //-- Set some aliases for the ascii characters.
+    const std::string peg   = "\u2502";
+    const std::string base  = "\u2632";
+    const std::string black = "\u2593";
+    const std::string white = "\u2591";
+    const std::string btwn  = "  ";
+
+    //-- Init the return string.
+    std::string ret = "";
+
+    //-- Use some buffer for a single line.
+    std::string line = "";
+    
+    //-- Width of a line.
+    int line_width = 1 + btwn.length() + (((_num_disk * 2) + 1 + btwn.length()) * _num_peg);
+    line += repeatString(" ", line_width);// + "\n";
+    
+    //-- Set the position indicators.
+    int idx = 1;
+    for (int pdx = 0; pdx < _num_peg; ++pdx) {
+        idx += btwn.length() + _num_disk;
+        
+        line[idx-1] = '[';
+        line[idx]   = '0'+pdx;
+        line[idx+1] = ']';
+
+        idx += 1 + _num_disk;
+    }
+
+    //-- Append the first line.
+    ret = line + ret;
+
+    //-- Add a line for the base of the game board.
+    line = " ";
+    line += repeatString(base, line_width-2) + "\n";
+    ret = line + ret;
+
+    //-- Find the max height of a single peg.
+    std::size_t max_height = 0;
+    for (std::size_t idx = 0; idx < board.size(); ++idx) {
+        max_height = (board[idx].size() > max_height) ? board[idx].size() : max_height;
+    }
+    max_height += 1;
+
+
+    //-- Step through each height 
+    for (std::size_t hdx = 0; hdx < max_height; ++hdx) {
+
+        //-- Clear the buffer an init the first space.
+        line = " ";
+        for (std::size_t pdx = 0; pdx < _num_peg; ++pdx) {
+
+            //-- Add some space between pegs.
+            line += btwn;
+
+            //-- Empty position case.
+            if (board[pdx].size() <= hdx) {
+                line += std::string(_num_disk, ' ') + peg + std::string(_num_disk, ' ');
+            } else {
+                Disk d = board[pdx][hdx];
+                line += std::string(_num_disk - d.getSize(), ' ');
+                line += repeatString((d.getColor() ? white : black), (d.getSize()*2) + 1);
+                line += std::string(_num_disk - d.getSize(), ' ');
+            }
+        }
+
+        //-- Add this row to the return buffer.
+        ret = line + "\n" + ret;
+    }
+
+
+    ret = "\n\n" + ret;
+    //std::cout << ret << std::endl;
+    //std::cout << "01234567890123456789012345678901234567890" << std::endl;
+    //std::cout << "0         1         2         3         4" << std::endl;
+    
+
+    //TODO: 
+    // <REMOVE> 
+    //ret += "\n\n\n>>>\n";
+    //for (std::size_t idx = 0; idx < board.size(); ++idx) {
+    //    ret += ("[" + std::to_string(idx) + "] ");
+    //    for (auto d : board[idx]) {
+    //        ret += "(";
+    //        ret += (d.getColor() ? "W1":"B0");
+    //        ret += ":" + std::to_string(d.getSize()) + ") ";
+    //    } 
+    //    ret += "\n";
+    //}
+    //ret += ">>>\n";
+    // <\REMOVE>
+
+    return ret;
+}
+
+
+std::string Board::repeatString(const std::string& str, int n) {
+    std::ostringstream os;
+    while (n--)
+        os << str;
+    return os.str();
+}
+

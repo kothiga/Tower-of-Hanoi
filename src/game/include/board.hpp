@@ -16,6 +16,7 @@
 #include <iostream>
 #include <cmath>
 #include <memory>
+#include <sstream>
 #include <vector>
 
 
@@ -49,6 +50,7 @@ class Board {
 
     bool _board_set;
     std::vector<std::vector<Disk>> _state; // Board state.
+    std::vector<std::vector<Disk>> _goal;
 
 
     public:
@@ -142,11 +144,20 @@ class Board {
 
 
     /* ===========================================================================
-    **  Get a showable state of the game board.
+    **  Get the raw goal state of the game board.
+    **
+    ** @return a 2D vector that holds a copy of raw goal state.
+    ** =========================================================================== */
+    std::vector<std::vector<Disk>> getRawGoal();
+
+
+    /* ===========================================================================
+    **  Get a showable state of the board state or goal state.
     **
     ** @return a string that can be passed to the user interface.
     ** =========================================================================== */
     std::string getShowableState();
+    std::string getShowableGoal();
 
 
     /* ===========================================================================
@@ -195,7 +206,28 @@ class Board {
     **  Allocate fresh storage space for the board.
     ** =========================================================================== */
     void allocateNewBoard();
-    
+
+
+    /* ===========================================================================
+    **  Draw a nice board.
+    ** 
+    ** @param board  Desired game board to draw.
+    **
+    ** @return A UTF-8 string to pass to be displayed.
+    ** =========================================================================== */
+    std::string drawBoard(const std::vector<std::vector<Disk>> board);
+
+
+    /* ===========================================================================
+    **  Helper function that returns a string str repeated n times.
+    ** 
+    ** @param str  Desired repeated string.
+    ** @param n    The number of times to repeat it.
+    **
+    ** @return str*n
+    ** =========================================================================== */
+    std::string repeatString(const std::string& str, int n);
+
 };
 
 #endif /* TOWER_OF_HANOI_BOARD_HPP */
