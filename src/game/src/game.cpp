@@ -17,6 +17,7 @@ Game::Game(std::shared_ptr<Player> player) {
     //-- Take a reference to the shared_ptr resource.
     this->_player = player;
     this->_board  = std::make_shared<Board>();
+    this->_solver = std::make_shared<Solver>();
 }
 
 
@@ -24,6 +25,7 @@ Game::~Game() {
     //-- Release the shared_ptr resource.
     this->_player.reset();
     this->_board.reset();
+    this->_solver.reset();
     std::cout << "[debug] Game Destroyed." << std::endl;
 }
 
@@ -36,6 +38,10 @@ bool Game::configure(std::map<std::string,std::string> conf) {
     _board->setBicolor(true);
 
     _board->init();
+
+    
+    //_solver
+
 
     return true;
 }

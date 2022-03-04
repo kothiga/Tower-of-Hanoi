@@ -23,6 +23,7 @@ Board::Board(std::size_t pegs/*=3*/, std::size_t disks/*=3*/, bool isBicolor/*=f
 
 Board::~Board() {
     this->_state.clear();
+    this->_goal.clear();
     // <REMOVE>
     std::cout << "[debug] Board Destroyed." << std::endl;
     // <\REMOVE>
@@ -35,8 +36,8 @@ bool Board::init() {
     this->allocateNewBoard();
     
     //-- Check bounds for number of pegs and disks.
-    if (_num_disk < 3 || _num_disk > 6) { return false; }
-    if (_num_peg  < 3 || _num_peg  > 6) { return false; }
+    if (_num_disk < 3 || _num_disk > 6) { return false; } //TODO: What is the upperbound for these w.r.t. 
+    if (_num_peg  < 3 || _num_peg  > 6) { return false; } //      the hash function and 64-bit ull?
 
     //-- Allocate the goal only once.
     _goal.clear();
@@ -181,10 +182,10 @@ std::string Board::getShowableGoal() {
 }
 
 
-unsigned long long Board::getHashableState() {
+ull Board::getHashableState() {
     
     //-- Set up a vector that the hash can be computed from.
-    std::vector<std::size_t> encoding = generateEncoding();
+    std::vector<std::size_t> encoding = generateEncoding(_state);
 
    // <REMOVE>
     for (int idx = 0; idx < encoding.size(); ++idx) {
@@ -199,12 +200,30 @@ unsigned long long Board::getHashableState() {
 }
 
 
-unsigned long long Board::computeHash(std::vector<std::size_t> encoding) {
+ull Board::getHashableGoal() {
+
+    //-- Set up a vector that the hash can be computed from.
+    std::vector<std::size_t> encoding = generateEncoding(_goal);
+    
+   // <REMOVE>
+    for (int idx = 0; idx < encoding.size(); ++idx) {
+        if ((idx % _num_disk) == 0) std::cout << "| ";
+        std::cout << encoding[idx] << " ";
+    }
+    std::cout << "|" << std::endl;
+    // <\REMOVE>
+
+    //-- Compute and return the hash from the encoding.
+    return computeHash(encoding);
+}
+
+
+ull Board::computeHash(std::vector<std::size_t> encoding) {
 
     //-- Compute the hash of the board state.
-    unsigned long long hash = 0;
+    ull hash = 0;
 
-    long long int power = 1;
+    ull power = 1;
     for (std::size_t edx = 0; edx < encoding.size(); ++edx) {
 
         // <REMOVE>
@@ -223,17 +242,17 @@ unsigned long long Board::computeHash(std::vector<std::size_t> encoding) {
 }
 
 
-std::vector<std::size_t> Board::generateEncoding() {
+std::vector<std::size_t> Board::generateEncoding(const std::vector<std::vector<Disk>> board) {
 
     //-- Set up a vector to hold the converted hash.
     std::vector<std::size_t> encoding(_num_peg * _num_disk);
 
     //-- Step through the board state and build a vector to hash.
-    for (std::size_t pdx = 0; pdx < _state.size(); ++pdx) {
-        for (std::size_t ddx = 0; ddx < _state[pdx].size(); ++ddx) {
+    for (std::size_t pdx = 0; pdx < board.size(); ++pdx) {
+        for (std::size_t ddx = 0; ddx < board[pdx].size(); ++ddx) {
             
             //-- Get a copy of this disk.
-            Disk d = _state[pdx][ddx];
+            Disk d = board[pdx][ddx];
 
             //-- Compute the index of the encoding vector from the current disk.
             std::size_t edx = (_num_disk - d.getSize()) + (pdx * _num_disk);
@@ -252,10 +271,10 @@ std::vector<std::size_t> Board::generateEncoding() {
 
 
                 //-- Need to look above the current disk (height+1) to determine state.
-                if (ddx+1 < _state[pdx].size()) {
+                if (ddx+1 < board[pdx].size()) {
 
                     //-- Get the disk above and check if the sizes are the same.
-                    Disk top = _state[pdx][ddx+1];
+                    Disk top = board[pdx][ddx+1];
                     if (d.getSize() == top.getSize()) {
 
                         //-- Case 3/4: adjust state val.
@@ -283,30 +302,24 @@ std::vector<std::size_t> Board::generateEncoding() {
 }
 
 
-std::vector<std::size_t> Board::generateEncoding(unsigned long long hash) {
+std::vector<std::size_t> Board::generateEncoding(ull hash) {
 
     //-- Set up a vector to hold the converted hash.
     std::vector<std::size_t> encoding(_num_peg * _num_disk);
 
+    //-- Recover the encoding from the hash.
     for (std::size_t edx = 0; edx < encoding.size(); ++edx) {
-
-        // <REMOVE>
-        //std::cout << hash << "\t= ";
-        // <\REMOVE>
 
         encoding[edx] = hash % ( _bicolor ? 5 : 2 );
         hash /= ( _bicolor ? 5 : 2 );
 
-        // <REMOVE>
-        //std::cout << encoding[edx] << "*" << ( _bicolor ? 5 : 2 ) << " + " << hash << std::endl;
-        // <\REMOVE>
     }
 
     return encoding;
 }
 
 
-bool Board::move(int from, int to) {
+bool Board::move(const int from, const int to) {
 
     // If the board state has not been set, return false.
     if (!_board_set) { return false; }
@@ -421,27 +434,11 @@ std::string Board::drawBoard(const std::vector<std::vector<Disk>> board) {
     }
 
 
-    ret = "\n\n" + ret;
+    ret = "\n\n" + ret + "\n";
     //std::cout << ret << std::endl;
     //std::cout << "01234567890123456789012345678901234567890" << std::endl;
     //std::cout << "0         1         2         3         4" << std::endl;
     
-
-    //TODO: 
-    // <REMOVE> 
-    //ret += "\n\n\n>>>\n";
-    //for (std::size_t idx = 0; idx < board.size(); ++idx) {
-    //    ret += ("[" + std::to_string(idx) + "] ");
-    //    for (auto d : board[idx]) {
-    //        ret += "(";
-    //        ret += (d.getColor() ? "W1":"B0");
-    //        ret += ":" + std::to_string(d.getSize()) + ") ";
-    //    } 
-    //    ret += "\n";
-    //}
-    //ret += ">>>\n";
-    // <\REMOVE>
-
     return ret;
 }
 
@@ -452,4 +449,3 @@ std::string Board::repeatString(const std::string& str, int n) {
         os << str;
     return os.str();
 }
-
