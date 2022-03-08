@@ -26,16 +26,23 @@ typedef std::pair<int,int> pii;
 typedef unsigned long long ull;
 
 
+struct move {
+    int from, to;
+    ull hash;
+    ull dist;
+};
+
+
 class Solver {
 
     private:
     /* ============================================================================
     **  Private variables of the solver.
     ** ============================================================================ */
-    std::map<ull,std::vector<pii>> _sssp;
-    
-    std::shared_ptr<Board> _board;
-    std::vector<pii>       _moves;
+    std::shared_ptr<Board>          _board;
+    std::map<ull,std::vector<move>> _sssp; //TODO: Try compute time with unordered map.
+    std::map<ull,ull>               _dest;
+    std::vector<pii>                _moves;
     
     bool _solved;
 

@@ -14,6 +14,7 @@
 #define TOWER_OF_HANOI_GAME_HPP
 
 #include <atomic>
+#include <chrono>
 #include <map>
 #include <memory>
 #include <string>
@@ -32,7 +33,7 @@ class Game {
     std::shared_ptr<Player> _player;
     std::shared_ptr<Board>  _board;
     std::shared_ptr<Solver> _solver;
-    std::atomic<bool> _running;
+    std::atomic<bool>       _running;
 
     
     public:
