@@ -128,6 +128,7 @@ bool Board::setFromHashableState(unsigned long long hash) {
                 std::size_t second_color = (disk_color + 1) % 2;
                 _state[pdx].push_back(Disk(disk_size, second_color));
                 placed[second_color] += 1;
+
                 //std::cout << _state[pdx][ _state[pdx].size()-1 ] << " ";
             }
         }
@@ -139,8 +140,7 @@ bool Board::setFromHashableState(unsigned long long hash) {
         }
         //std::cout << std::endl;
     } 
-    //std::cout << std::endl;
-    
+    //std::cout << std::endl;  
 
     //-- Declare that the board has been initialized.
     return _board_set = true;

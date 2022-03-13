@@ -56,6 +56,7 @@ class Board {
     std::vector<std::vector<Disk>> _goal;  // Goal state.
 
 
+
     public:
     /* ============================================================================
     **  Main Constructor.

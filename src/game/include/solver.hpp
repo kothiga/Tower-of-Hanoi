@@ -50,7 +50,7 @@ class Solver {
     ull  _start_hash;
     ull  _goal_hash;
 
-    
+  
     public:
     /* ============================================================================
     **  Main Constructor.
