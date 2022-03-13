@@ -13,6 +13,7 @@ set(${TARGET_NAME}_SRC
     ../game/src/game.cpp
     ../game/src/player.cpp
     ../game/src/board.cpp
+    ../game/src/solver.cpp
 )
 
 set(${TARGET_NAME}_HDR
@@ -20,6 +21,7 @@ set(${TARGET_NAME}_HDR
     ../game/include/game.hpp
     ../game/include/player.hpp
     ../game/include/board.hpp
+    ../game/include/solver.hpp
 )
 
 add_executable(

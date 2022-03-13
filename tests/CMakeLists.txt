@@ -25,10 +25,12 @@ include_directories(../src/game/include/)
 
 set(${TARGET_NAME}_SRC
     ../src/game/src/board.cpp
+    ../src/game/src/solver.cpp
 )
 
 set(${TARGET_NAME}_HDR
     ../src/game/include/board.hpp
+    ../src/game/include/solver.hpp
 )
 
 set(${TARGET_NAME}_tests

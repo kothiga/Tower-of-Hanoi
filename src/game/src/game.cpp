@@ -17,6 +17,7 @@ Game::Game(std::shared_ptr<Player> player) {
     //-- Take a reference to the shared_ptr resource.
     this->_player = player;
     this->_board  = std::make_shared<Board>();
+    this->_solver = std::make_shared<Solver>();
 }
 
 
@@ -24,6 +25,7 @@ Game::~Game() {
     //-- Release the shared_ptr resource.
     this->_player.reset();
     this->_board.reset();
+    this->_solver.reset();
     std::cout << "[debug] Game Destroyed." << std::endl;
 }
 
@@ -36,6 +38,19 @@ bool Game::configure(std::map<std::string,std::string> conf) {
     _board->setBicolor(true);
 
     _board->init();
+
+    // Start a timer.
+    auto start = std::chrono::high_resolution_clock::now();
+
+    _solver.reset(new Solver(3, 4, true));
+    _solver->solve();
+
+    // End the timer.
+    auto end = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Took "
+         << ((float)std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()) / 1000.0
+         << " seconds to run the solve function." << std::endl;
 
     return true;
 }
@@ -74,7 +89,9 @@ int Game::run() {
                 _player->writeOutput("[debug] Move action failed!!");
             } else {
                 showable = _board->getShowableState();
-                _board->getHashableState();
+                ull hash = _board->getHashableState();
+                pii hint = _solver->getBestMove(hash);
+                showable = "Hint: (" + std::to_string(hint.first) + "," + std::to_string(hint.second) + ")\n\n" + showable;
                 _player->writeOutput(showable);
             }
 

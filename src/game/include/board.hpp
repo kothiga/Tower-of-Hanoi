@@ -14,10 +14,13 @@
 #define TOWER_OF_HANOI_BOARD_HPP
 
 #include <iostream>
-#include <cmath>
 #include <memory>
 #include <sstream>
+#include <string>
 #include <vector>
+
+
+typedef unsigned long long ull;
 
 
 class Disk {
@@ -50,7 +53,8 @@ class Board {
 
     bool _board_set;
     std::vector<std::vector<Disk>> _state; // Board state.
-    std::vector<std::vector<Disk>> _goal;
+    std::vector<std::vector<Disk>> _goal;  // Goal state.
+
 
 
     public:
@@ -108,7 +112,7 @@ class Board {
     **
     ** @return success of if the given hash was accepted. If false, board state is unchanged.
     ** =========================================================================== */
-    bool setFromHashableState(unsigned long long hash);
+    bool setFromHashableState(ull hash);
 
 
     /* ===========================================================================
@@ -161,11 +165,12 @@ class Board {
 
 
     /* ===========================================================================
-    **  Get a unique descriptor of the state of the game board.
+    **  Get a unique descriptor of the state of the game board or the goal state.
     **
     ** @return a hash that can be passed to a solving interface.
     ** =========================================================================== */
-    unsigned long long getHashableState();
+    ull getHashableState();
+    ull getHashableGoal();
 
 
     /* ===========================================================================
@@ -175,7 +180,7 @@ class Board {
     **
     ** @return a unique hash for the vector.
     ** =========================================================================== */
-    unsigned long long computeHash(std::vector<std::size_t> encoding);
+    ull computeHash(std::vector<std::size_t> encoding);
 
 
     /* ===========================================================================
@@ -186,8 +191,8 @@ class Board {
     **
     ** @return an encoding representing the state of the game board.
     ** =========================================================================== */
-    std::vector<std::size_t> generateEncoding();
-    std::vector<std::size_t> generateEncoding(unsigned long long hash);
+    std::vector<std::size_t> generateEncoding(const std::vector<std::vector<Disk>> board);
+    std::vector<std::size_t> generateEncoding(ull hash);
 
 
     /* ===========================================================================
@@ -198,7 +203,7 @@ class Board {
     **
     ** @return a string that can be passed to the user interface.
     ** =========================================================================== */
-    bool move(int from, int to);
+    bool move(const int from, const int to);
 
 
     private:
@@ -209,9 +214,9 @@ class Board {
 
 
     /* ===========================================================================
-    **  Draw a nice board.
+    **  Draw a nicely formatted board.
     ** 
-    ** @param board  Desired game board to draw.
+    ** @param board  Desired game board to draw (current/goal state).
     **
     ** @return A UTF-8 string to pass to be displayed.
     ** =========================================================================== */
