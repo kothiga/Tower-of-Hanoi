@@ -37,3 +37,20 @@ TEST(SolverTest, SolverConstructor_Default) {
     //EXPECT_FALSE(b.getIsBicolor());
     //EXPECT_TRUE(b.init());
 }
+
+
+//
+// SolverTest_SolverFlushSolution
+//
+TEST(SolverTest, SolverFlushSolution) {
+
+    Solver s(/*pegs=*/3, /*disks=*/4, /*isBicolor=*/true);
+
+    s.solve();
+    s.flushSolution();
+
+    //EXPECT_EQ(3, b.getNumPegs());
+    //EXPECT_EQ(3, b.getNumDisks());
+    //EXPECT_FALSE(b.getIsBicolor());
+    //EXPECT_TRUE(b.init());
+}

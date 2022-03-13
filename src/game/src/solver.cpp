@@ -18,6 +18,9 @@ Solver::Solver(std::size_t pegs/*=3*/, std::size_t disks/*=3*/, bool isBicolor/*
     this->_board = std::make_shared<Board>(pegs, disks, isBicolor);
     this->_board->init();
 
+    this->_start_hash = this->_board->getHashableState();
+    this->_goal_hash  = this->_board->getHashableGoal();
+
     //-- Ensure these data structures are cleared out of old data.
     this->_sssp.clear();
     this->_dest.clear();
@@ -95,7 +98,7 @@ void Solver::solve() {
         }
 
         //-- Iterate through and try all possible moves.
-        std::vector<move> state_moves;
+        mvec state_moves;
         for (std::size_t mdx = 0; mdx < _moves.size(); ++mdx) {
 
             //-- Try the move, if it didn't take, move onto the next.
@@ -126,7 +129,7 @@ void Solver::solve() {
             move current_move;
             current_move.from = _moves[mdx].first;
             current_move.to   = _moves[mdx].second;
-            current_move.hash = move_hash;
+            current_move.hash =  move_hash;
             current_move.dist = _dest[move_hash];
 
             state_moves.push_back(current_move);
@@ -148,16 +151,21 @@ void Solver::solve() {
 pii Solver::getBestMove(ull hash) {
 
     if (_sssp.find(hash) == _sssp.end()) { return std::make_pair(-1,-1); }
-    std::vector<move> state_moves = _sssp[hash];
+    mvec state_moves = _sssp[hash];
 
+    // <REMOVE>
     std::cout << "Hash: " << hash << std::endl;
-
     std::size_t min_idx = 0;
     std::cout << "\t - (" << state_moves[min_idx].from << "," << state_moves[min_idx].to << ")  -->  " 
                   << state_moves[min_idx].dist << ":" << state_moves[min_idx].hash << std::endl;
+    // <\REMOVE>
+
     for (std::size_t mdx = 1; mdx < state_moves.size(); ++mdx) {
+
+        // <REMOVE>
         std::cout << "\t - (" << state_moves[mdx].from << "," << state_moves[mdx].to << ")  -->  " 
                   << state_moves[mdx].dist << ":" << state_moves[mdx].hash << std::endl;
+        // <\REMOVE>
 
         if (state_moves[min_idx].dist > state_moves[mdx].dist) {
             min_idx = mdx;
@@ -165,4 +173,51 @@ pii Solver::getBestMove(ull hash) {
     }
 
     return std::make_pair(state_moves[min_idx].from, state_moves[min_idx].to);
+}
+
+
+std::string Solver::flushSolution() {
+
+    std::string ret = "";
+    std::string tabx1(4,  ' ');
+    std::string tabx2(8,  ' ');
+    std::string tabx3(12, ' ');
+
+    ret += "[\n";
+    ret += tabx1 + "{\n" +
+        tabx2 + "\"pegs\":    \"" + std::to_string(_board->getNumPegs())   + "\",\n" + 
+        tabx2 + "\"disks\":   \"" + std::to_string(_board->getNumDisks())  + "\",\n" + 
+        tabx2 + "\"bicolor\": \"" + std::to_string(_board->getIsBicolor()) + "\"\n"  +
+        tabx1 + "},\n";
+
+    ret += tabx1 + "{\n" + 
+        tabx2 + "\"start\": \"" + std::to_string(_start_hash) + "\",\n" +
+        tabx2 + "\"goal\":  \"" + std::to_string(_goal_hash)  + "\"\n"  +
+        tabx1 + "},\n";
+
+    ret += tabx1 + "{\n";
+    for (auto it = _sssp.begin(); it != _sssp.end(); ++it) {
+
+        if (it != _sssp.begin()) { ret += ",\n"; }
+        
+        ret += tabx2 + "\"" + std::to_string(it->first) + "\": {\n";
+
+        mvec state_moves = it->second;
+        for (std::size_t mdx = 0; mdx < state_moves.size(); ++mdx) {
+            if (mdx) { ret += ",\n"; }
+            ret += tabx3 + "\"(" + 
+                std::to_string(state_moves[mdx].from) + "," +
+                std::to_string(state_moves[mdx].to) + ")\": { \"hash\": \"" +
+                std::to_string(state_moves[mdx].hash) + "\", \"dist\": \"" + 
+                std::to_string(state_moves[mdx].dist) + "\" }";
+        }
+
+        ret += "\n" + tabx2 + "}";
+    }
+    ret += "\n" + tabx1 + "}\n";
+    ret += "]";
+
+    std::cout << ret << std::endl;
+
+    return ret;
 }

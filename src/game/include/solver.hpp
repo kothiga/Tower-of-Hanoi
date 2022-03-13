@@ -14,8 +14,9 @@
 #define TOWER_OF_HANOI_SOLVER_HPP
 
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <queue>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -25,12 +26,13 @@
 typedef std::pair<int,int> pii;
 typedef unsigned long long ull;
 
-
 struct move {
     int from, to;
     ull hash;
     ull dist;
 };
+
+typedef std::vector<move> mvec;
 
 
 class Solver {
@@ -39,12 +41,14 @@ class Solver {
     /* ============================================================================
     **  Private variables of the solver.
     ** ============================================================================ */
-    std::shared_ptr<Board>          _board;
-    std::map<ull,std::vector<move>> _sssp; //TODO: Try compute time with unordered map.
-    std::map<ull,ull>               _dest;
-    std::vector<pii>                _moves;
+    std::shared_ptr<Board>       _board;
+    std::unordered_map<ull,mvec> _sssp;
+    std::unordered_map<ull,ull>  _dest;
+    std::vector<pii>             _moves;
     
     bool _solved;
+    ull  _start_hash;
+    ull  _goal_hash;
 
     
     public:
@@ -68,9 +72,21 @@ class Solver {
 
 
     /* ===========================================================================
-    **  Look up the next best move corresponding to 
+    **  Look up the next best move corresponding to the input hash.
+    **
+    ** @param hash  the hash corresponding to a board state. 
+    **
+    ** @return a pair of ints that represent the next best move.
     ** =========================================================================== */
     pii getBestMove(ull hash);
+
+
+    /* ===========================================================================
+    **  Flush the single source shortest path from all board states to the goal state.
+    **
+    ** @return a string in json format.
+    ** =========================================================================== */
+    std::string flushSolution();
 
 
     private:

@@ -121,14 +121,14 @@ bool Board::setFromHashableState(unsigned long long hash) {
             _state[pdx].push_back(Disk(disk_size, disk_color));
             placed[disk_color] += 1;
 
-            std::cout << _state[pdx][ _state[pdx].size()-1 ] << " ";
+            //std::cout << _state[pdx][ _state[pdx].size()-1 ] << " ";
 
             //-- Check to see if this state holds a second disk.
             if (encoding[idx] >= 3) {
                 std::size_t second_color = (disk_color + 1) % 2;
                 _state[pdx].push_back(Disk(disk_size, second_color));
                 placed[second_color] += 1;
-                std::cout << _state[pdx][ _state[pdx].size()-1 ] << " ";
+                //std::cout << _state[pdx][ _state[pdx].size()-1 ] << " ";
             }
         }
 
@@ -137,9 +137,9 @@ bool Board::setFromHashableState(unsigned long long hash) {
         for (std::size_t idx = 0; idx < placed.size(); ++idx) {
             if (placed[idx] != 1) { return false; }
         }
-        std::cout << std::endl;
+        //std::cout << std::endl;
     } 
-    std::cout << std::endl;
+    //std::cout << std::endl;
     
 
     //-- Declare that the board has been initialized.
@@ -188,11 +188,11 @@ ull Board::getHashableState() {
     std::vector<std::size_t> encoding = generateEncoding(_state);
 
    // <REMOVE>
-    for (int idx = 0; idx < encoding.size(); ++idx) {
-        if ((idx % _num_disk) == 0) std::cout << "| ";
-        std::cout << encoding[idx] << " ";
-    }
-    std::cout << "|" << std::endl;
+    //for (int idx = 0; idx < encoding.size(); ++idx) {
+    //    if ((idx % _num_disk) == 0) std::cout << "| ";
+    //    std::cout << encoding[idx] << " ";
+    //}
+    //std::cout << "|" << std::endl;
     // <\REMOVE>
 
     //-- Compute and return the hash from the encoding.
@@ -206,11 +206,11 @@ ull Board::getHashableGoal() {
     std::vector<std::size_t> encoding = generateEncoding(_goal);
     
    // <REMOVE>
-    for (int idx = 0; idx < encoding.size(); ++idx) {
-        if ((idx % _num_disk) == 0) std::cout << "| ";
-        std::cout << encoding[idx] << " ";
-    }
-    std::cout << "|" << std::endl;
+    //for (int idx = 0; idx < encoding.size(); ++idx) {
+    //    if ((idx % _num_disk) == 0) std::cout << "| ";
+    //    std::cout << encoding[idx] << " ";
+    //}
+    //std::cout << "|" << std::endl;
     // <\REMOVE>
 
     //-- Compute and return the hash from the encoding.
@@ -227,15 +227,15 @@ ull Board::computeHash(std::vector<std::size_t> encoding) {
     for (std::size_t edx = 0; edx < encoding.size(); ++edx) {
 
         // <REMOVE>
-        if (edx) std::cout << " + ";
-        std::cout << encoding[edx] << "*" << power;
+        //if (edx) std::cout << " + ";
+        //std::cout << encoding[edx] << "*" << power;
         // <\REMOVE>
 
         hash += (encoding[edx] * power);
         power *= ( _bicolor ? 5 : 2 );
     }
     // <REMOVE>
-    std:: cout << " = " << hash << std::endl;
+    //std:: cout << " = " << hash << std::endl;
     // <\REMOVE>
 
     return hash;
