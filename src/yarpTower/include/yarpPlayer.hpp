@@ -10,30 +10,39 @@
  * ================================================================================
  */
 
-#ifndef TOWER_OF_HANOI_IOSPLAYER_HPP
-#define TOWER_OF_HANOI_IOSPLAYER_HPP
+#ifndef TOWER_OF_HANOI_YARPPLAYER_HPP
+#define TOWER_OF_HANOI_YARPPLAYER_HPP
 
 #include <iostream>
 #include <memory>
 #include <string>
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/RpcServer.h>
+
 #include <player.hpp>
 
 
-class IosPlayer : public Player {
+class YarpPlayer : public Player {
+
+    private:
+    /* ============================================================================
+    **  Yarp RPC server for receiving commands and replying information.
+    ** ============================================================================ */
+    yarp::os::RpcServer port;
 
 
     public:
     /* ============================================================================
     **  Main Constructor.
     ** ============================================================================ */
-    IosPlayer();
+    YarpPlayer();
 
 
     /* ===========================================================================
     **  Destructor.
     ** =========================================================================== */
-    ~IosPlayer();
+    ~YarpPlayer();
 
 
     /* ============================================================================
@@ -54,4 +63,4 @@ class IosPlayer : public Player {
 
 };
 
-#endif /* TOWER_OF_HANOI_IOSPLAYER_HPP */
+#endif /* TOWER_OF_HANOI_YARPPLAYER_HPP */
