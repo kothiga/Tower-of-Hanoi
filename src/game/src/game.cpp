@@ -60,6 +60,7 @@ int Game::run() {
 
     //-- Set the running status of the game.
     _running = true;
+    ull goal_hash = _board->getHashableGoal();
 
     //-- Loop until interrupt occurs.
     while (_running) {
@@ -70,6 +71,7 @@ int Game::run() {
         //-- Set vars outside switch.
         bool success;
         std::string showable;
+        ull hash; pii hint;
 
         switch (act.selection) {
         
@@ -80,44 +82,55 @@ int Game::run() {
 
         case action::MOVE:
             //-- Try and make the move provided.
-            _player->writeOutput("[debug] Moving peice from " 
-                + std::to_string(act.from) + " to " 
-                + std::to_string(act.to) + "!!");
+            //_player->writeOutput("[debug] Moving peice from " 
+            //    + std::to_string(act.from) + " to " 
+            //    + std::to_string(act.to) + "!!");
 
             success = _board->move(act.from, act.to);
-            if (!success) {
-                _player->writeOutput("[debug] Move action failed!!");
-            } else {
-                showable = _board->getShowableState();
-                ull hash = _board->getHashableState();
-                pii hint = _solver->getBestMove(hash);
-                showable = "Hint: (" + std::to_string(hint.first) + "," + std::to_string(hint.second) + ")\n\n" + showable;
-                _player->writeOutput(showable);
+            if (success) {
+                //-- If the move was good and we're at the goal state
+                //-- give notice and close the program.
+                hash = _board->getHashableState();
+                if (hash == goal_hash) {
+                    _player->writeOutput("2");
+                    //_running = false;
+                    break;
+                }
             }
+            //if (!success) {
+            //    _player->writeOutput("[debug] Move action failed!!");
+            //} else {
+            //    showable = _board->getShowableState();
+            //    _player->writeOutput(showable);
+            //}
+            _player->writeOutput((success ? "1" : "0"));
 
             break;
 
         case action::STATUS:
             //-- Generate the boards status.
-            _player->writeOutput("[debug] Generating current board status...");
             showable = _board->getShowableState();
             _player->writeOutput(showable);
             break;
 
         case action::GOAL:
             //-- Generate the boards goal.
-            _player->writeOutput("[debug] Generating board goal state...");
             showable = _board->getShowableGoal();
             _player->writeOutput(showable);
             break;
 
         case action::HINT:
             //-- Ask the solver for the next optimal move. 
-            _player->writeOutput("[debug] Generating a hint! Hold tight...");
+            hash = _board->getHashableState();
+            hint = _solver->getBestMove(hash);
+            showable = std::to_string(hint.first) + " " + std::to_string(hint.second);
+            _player->writeOutput(showable);
             break;
 
         case action::QUIT:
             //-- Stop the game and exit.
+            showable = _board->getShowableState();
+            //_player->writeOutput(showable);
             _player->writeOutput("Stopping the game...");
             _running = false;
             break;

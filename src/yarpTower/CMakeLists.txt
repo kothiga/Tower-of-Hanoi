@@ -5,9 +5,48 @@
 cmake_minimum_required(VERSION 3.12)
 
 
-#target_link_libraries(
-#    ${TARGET_NAME}
-#    ${YARP_LIBRARIES}
-#)
+set(TARGET_NAME yarpTower)
+
+find_package(YARP REQUIRED)
+
+set(${TARGET_NAME}_SRC
+    src/main.cpp
+    src/yarpPlayer.cpp
+    ../game/src/game.cpp
+    ../game/src/player.cpp
+    ../game/src/board.cpp
+    ../game/src/solver.cpp
+)
+
+set(${TARGET_NAME}_HDR
+    include/yarpPlayer.hpp
+    ../game/include/game.hpp
+    ../game/include/player.hpp
+    ../game/include/board.hpp
+    ../game/include/solver.hpp
+)
+
+add_executable(
+    ${TARGET_NAME} 
+    ${${TARGET_NAME}_HDR}
+    ${${TARGET_NAME}_SRC}
+)
+
+target_include_directories(
+    ${TARGET_NAME}
+    PRIVATE 
+    ./include
+    ../game/include
+)
+
+target_link_libraries(
+    ${TARGET_NAME}
+    ${YARP_LIBRARIES}
+)
+
+install(
+    TARGETS        ${TARGET_NAME}
+    DESTINATION    bin  
+)
 
 ############################################################

@@ -434,7 +434,7 @@ std::string Board::drawBoard(const std::vector<std::vector<Disk>> board) {
     }
 
 
-    ret = "\n\n" + ret + "\n";
+    ret = "\n" + ret + "\n";
     //std::cout << ret << std::endl;
     //std::cout << "01234567890123456789012345678901234567890" << std::endl;
     //std::cout << "0         1         2         3         4" << std::endl;
