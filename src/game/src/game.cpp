@@ -93,7 +93,7 @@ int Game::run() {
                 hash = _board->getHashableState();
                 if (hash == goal_hash) {
                     _player->writeOutput("2");
-                    _running = false;
+                    //_running = false;
                     break;
                 }
             }
@@ -129,6 +129,8 @@ int Game::run() {
 
         case action::QUIT:
             //-- Stop the game and exit.
+            showable = _board->getShowableState();
+            //_player->writeOutput(showable);
             _player->writeOutput("Stopping the game...");
             _running = false;
             break;

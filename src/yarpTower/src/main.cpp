@@ -16,6 +16,7 @@
 #include <string>
 
 #include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarpPlayer.hpp>
 #include <game.hpp>
@@ -28,6 +29,10 @@ int main (int argc, char **argv) {
 
     //-- Init the yarp network.
     yarp::os::Network yarp;
+    if (!yarp.checkNetwork()) {
+        yError() << "Cannot make connection with the YARP server!!";
+        return EXIT_FAILURE;
+    }
 
     //-- Get the arguments from input.
     std::map<std::string,std::string> conf = getArgs(argc, argv);

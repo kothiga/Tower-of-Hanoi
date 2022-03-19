@@ -16,8 +16,9 @@
 YarpPlayer::YarpPlayer() : Player() {
 
     //-- Open the yarp rpc port.
-    port.open("/yarpTower/rpc");
-
+    if (!port.open("/yarpTower/rpc")) {
+        yError() << "/yarpTower: Unable to open port /yarpTower/rpc";
+    }
 }
 
 
@@ -45,7 +46,7 @@ std::string YarpPlayer::readInput() {
     port.read(cmd, true);
 
     std::string ret;
-    ret = cmd.toString();
+    ret = cmd.get(0).toString();
 
     return ret;
 }

@@ -14,11 +14,13 @@
 #define TOWER_OF_HANOI_YARPPLAYER_HPP
 
 #include <iostream>
+#include <algorithm>
 #include <memory>
 #include <string>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/RpcServer.h>
+#include <yarp/os/LogStream.h>
 
 #include <player.hpp>
 
