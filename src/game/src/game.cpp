@@ -127,6 +127,31 @@ int Game::run() {
             _player->writeOutput(showable);
             break;
 
+        case action::HASH:
+            //-- Get the hash from the board and send it.
+            hash = _board->getHashableState();
+            showable = std::to_string(hash);
+            _player->writeOutput(showable);
+            break;
+
+        case action::DIST:
+            //-- Get the distance to the goal from the solver for the current state.
+            hash = _board->getHashableState();
+            showable = std::to_string(_solver->getDistance(hash));
+            _player->writeOutput(showable);
+            break;
+
+        case action::SET:
+            //-- Try setting the board state from a hash. Keep the previous as a backup.
+            hash = _board->getHashableState();
+            success = _board->setFromHashableState(act.hash);
+            showable = ( success ? "1" : "0" );
+            if (!success) {
+                _board->setFromHashableState(hash);
+            }
+            _player->writeOutput(showable);
+            break;
+
         case action::QUIT:
             //-- Stop the game and exit.
             showable = _board->getShowableState();

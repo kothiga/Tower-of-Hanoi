@@ -23,7 +23,7 @@ Solver::Solver(std::size_t pegs/*=3*/, std::size_t disks/*=3*/, bool isBicolor/*
 
     //-- Ensure these data structures are cleared out of old data.
     this->_sssp.clear();
-    this->_dest.clear();
+    this->_dist.clear();
     this->_moves.clear();
     this->_solved = false;
 
@@ -47,7 +47,7 @@ Solver::~Solver() {
 
     //-- Clear stored data.
     this->_sssp.clear();
-    this->_dest.clear();
+    this->_dist.clear();
     this->_moves.clear();
 
     // <REMOVE>
@@ -76,7 +76,7 @@ void Solver::solve() {
 
     //-- Seed the bfs with our first state that we're looking at.
     bfs.push(goal_hash);
-    _dest[goal_hash] = 0;
+    _dist[goal_hash] = 0;
 
     //-- Loop until all states have been reached.
     while (!bfs.empty()) {
@@ -121,8 +121,8 @@ void Solver::solve() {
             //-- If this state has not been seen before,
             //-- set how many moves there are to the
             //-- goal state for this state.
-            if (_dest.find(move_hash) == _dest.end()) {
-                _dest[move_hash] = _dest[cur_state] + 1;
+            if (_dist.find(move_hash) == _dist.end()) {
+                _dist[move_hash] = _dist[cur_state] + 1;
             }
 
             //-- Add this move as an edge to the sssp possible states.
@@ -130,7 +130,7 @@ void Solver::solve() {
             current_move.from = _moves[mdx].first;
             current_move.to   = _moves[mdx].second;
             current_move.hash =  move_hash;
-            current_move.dist = _dest[move_hash];
+            current_move.dist = _dist[move_hash];
 
             state_moves.push_back(current_move);
         }
@@ -142,7 +142,7 @@ void Solver::solve() {
     //-- This has been computed!
     _solved = true;
 
-    std::cout << "Num states=" << _sssp.size() << " =? " << _dest.size() << std::endl;
+    std::cout << "Num states=" << _sssp.size() << std::endl;
     
     return;
 }
@@ -173,6 +173,11 @@ pii Solver::getBestMove(ull hash) {
     }
 
     return std::make_pair(state_moves[min_idx].from, state_moves[min_idx].to);
+}
+
+
+ull Solver::getDistance(ull hash) {
+    return _dist[hash];
 }
 
 

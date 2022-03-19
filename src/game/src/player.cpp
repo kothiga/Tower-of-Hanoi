@@ -42,6 +42,16 @@ action Player::getAction() {
             return ret;
         }
 
+        if (cmd == "dist") {
+            ret.selection = action::DIST;
+            return ret;
+        }
+
+        if (cmd == "hash") {
+            ret.selection = action::HASH;
+            return ret;
+        }
+
         if (cmd == "hint") {
             ret.selection = action::HINT;
             return ret;
@@ -60,6 +70,45 @@ action Player::getAction() {
         if (cmd == "help") {
             ret.selection = action::HELP;
             ret.msg = this->getHelpString();
+            return ret;
+        }
+
+        if (cmd == "set") {
+
+            //-- Check correct number of inputs for command.
+            if (input.size() != 2) {
+                ret.selection = action::HELP;
+                ret.msg = "[Error] Incorrect number of arguments for ``set`` command!! "
+                    "Received ``" + std::to_string(input.size()) + "`` expected ``2``.\n\n"
+                    + this->getHelpString();
+                return ret;
+            }
+
+            //-- Get the hash from the string.
+            std::string hash;
+            hash = input[1];
+
+            //-- Check that this is an integer (unsigned long long).
+            if (!this->isStringInt(hash, false)) {
+                ret.selection = action::HELP;
+                ret.msg = "[Error] Received ``" + hash + "``. Expected an unsigned integer.\n\n"
+                + this->getHelpString();
+                return ret;
+            }
+
+            //-- Set meets selection criteria. Return it.
+            ret.selection = action::SET;
+            try {
+                ret.hash = std::stoull(hash);
+            } catch(std::out_of_range) {
+
+                ret.selection = action::HELP;
+                ret.msg = "[Error] Received an unsigned long long value out of range. Got ``" 
+                + hash + "``. Please ensure hash is a propper unsigned long long.\n\n" 
+                + this->getHelpString();
+
+            }
+
             return ret;
         }
 
@@ -133,6 +182,9 @@ std::string Player::getHelpString() {
     "    status/show         ``get current board configuration``     \n"
     "    goal                ``show what the goal state``            \n"
     "    hint                ``request a hint for what next action`` \n"
+    "    hash                ``get the current board state hash``    \n"
+    "    dist                ``get the distance to the goal state``  \n"
+    "    set longlong(hash)  ``set the current board state as hash`` \n"
     "    quit/exit           ``stop the game and exit``              \n"
     "";
 
@@ -163,7 +215,8 @@ std::vector<std::string> Player::parseString(const std::string& str) {
 }
 
 
-bool Player::isStringInt(const std::string& str) {
+bool Player::isStringInt(const std::string& str, bool be_signed/*=true*/) {
     //-- Check if string contains any characters that aren't 0-9 or negative.
-    return !str.empty() && str.find_first_not_of("-0123456789") == std::string::npos;
+    return !str.empty() && str.find_first_not_of( 
+        (be_signed ? "-0123456789" : "0123456789")) == std::string::npos;
 }

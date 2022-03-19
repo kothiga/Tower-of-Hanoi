@@ -43,7 +43,7 @@ class Solver {
     ** ============================================================================ */
     std::shared_ptr<Board>       _board;
     std::unordered_map<ull,mvec> _sssp;
-    std::unordered_map<ull,ull>  _dest;
+    std::unordered_map<ull,ull>  _dist;
     std::vector<pii>             _moves;
     
     bool _solved;
@@ -79,6 +79,16 @@ class Solver {
     ** @return a pair of ints that represent the next best move.
     ** =========================================================================== */
     pii getBestMove(ull hash);
+
+
+    /* ===========================================================================
+    **  Look up the distance the input hash is from the goal state.
+    **
+    ** @param hash  the hash corresponding to a board state. 
+    **
+    ** @return an unsigned long long telling the distance .
+    ** =========================================================================== */
+    ull getDistance(ull hash);
 
 
     /* ===========================================================================

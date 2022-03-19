@@ -20,8 +20,8 @@
 
 
 struct action {
-    int from, to; std::string msg;
-    enum { HELP, MOVE, STATUS, GOAL, HINT, QUIT } selection;
+    int from, to; unsigned long long hash; std::string msg;
+    enum { HELP, MOVE, STATUS, GOAL, HINT, HASH, DIST, SET, QUIT } selection;
 };
 
 
@@ -95,7 +95,7 @@ class Player {
     std::vector<std::string> parseString(const std::string& str);
 
     // (filters floating point numbers too)
-    bool isStringInt(const std::string& str);
+    bool isStringInt(const std::string& str, bool be_signed=true);
     
 };
 
