@@ -22,7 +22,6 @@
 
 class IosPlayer : public Player {
 
-
     public:
     /* ============================================================================
     **  Main Constructor.

@@ -12,6 +12,7 @@
 
 #include <solver.hpp>
 
+
 Solver::Solver(std::size_t pegs/*=3*/, std::size_t disks/*=3*/, bool isBicolor/*=false*/) {
 
     //-- Create a fresh board and initialize it.
